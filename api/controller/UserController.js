@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import asyncHandler from "express-async-handler";
 import User from "../models/UserSchema.js";
+import { makeHash } from "../utility/hash.js";
 /**
  * @desc get all users
  * @rotue GET /users
@@ -37,12 +38,12 @@ export const createUser = asyncHandler(async (req, res) => {
 		});
 
 	// hash password
-	const salt = await bcrypt.genSalt(10);
-	const hassedPassword = await bcrypt.hash(password, salt);
+
+
 	const user = await User.create({
 		username: username,
 		email: email,
-		password: hassedPassword,
+		password: makeHash(password)
 	});
 
 	if (user) {
@@ -65,7 +66,6 @@ export const getSingleUser = asyncHandler(async (req, res) => {
 	return res.status(200).json(user);
 });
 
-
 /**
  * @desc Update user
  * @rotue PATCH /users/:id
@@ -77,21 +77,20 @@ export const updateUser = asyncHandler(async (req, res) => {
 	const { username, email, password } = req.body;
 
 	// check validit
+	// check validate
 	if (!username || !email || !password)
 		return res.status(400).json({
-			message: "all field are required",
+			message: "All fields are required !",
 		});
-	const salt = await bcrypt.genSalt(10);
-	const hassedPassword = await bcrypt.hash(password, salt);
-	const user = await findById(id).exact();
-    console.log(user);
+
+	const user = await User.findById(id);
 	if (!user)
 		return res.status(404).json({
 			message: "user not found",
 		});
 	user.username = username;
 	user.email = email;
-	user.password = hassedPassword;
+	user.password = makeHash(password);;
 
 	const updateUser = await User.findByIdAndUpdate(id, {
 		username,
@@ -102,17 +101,15 @@ export const updateUser = asyncHandler(async (req, res) => {
 	return res.status(200).json({ message: "user update successfully" });
 });
 
-
-
 /**
  * @desc delete user
  * @rotue Delete /user
  * @access public
  */
 
-export const deleteUser = asyncHandler(async(req, res) => {
-    const {id} = req.params;
-    const user = await User.findByIdAndDelete(id);
-    if(!user) return res.status(404).json({ message: "user not found" });
-    return res.status(200).json({ message: "Delete user successfully" });
-})
+export const deleteUser = asyncHandler(async (req, res) => {
+	const { id } = req.params;
+	const user = await User.findByIdAndDelete(id);
+	if (!user) return res.status(404).json({ message: "user not found" });
+	return res.status(200).json({ message: "Delete user successfully" });
+});
