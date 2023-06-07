@@ -6,6 +6,7 @@ import mongoDBConnection from "./config/db.js";
 import errorHandler from "./middleware/errorHandler.js";
 import userRouter from "./routes/userRoute.js";
 import colors from "colors";
+import authRouter from "./routes/authRoute.js";
 // environment variables
 
 dotenv.config();
@@ -23,6 +24,7 @@ app.use(cors());
 // routes
 
 app.use("/api/v1/user", userRouter);
+app.use("/api/v1/auth", authRouter);
 
 // error handlers
 
