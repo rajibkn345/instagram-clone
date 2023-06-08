@@ -3,4 +3,5 @@ api/node_modules/
 client/node_modules
 # Ignore .env file
 api/.env
+.env
 
