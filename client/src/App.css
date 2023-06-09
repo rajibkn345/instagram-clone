@@ -5,5 +5,6 @@
 .bg-phone{
 background: url("./assets/bg-2x.png");
 background-position: center center;
-background-size: cover;
+background-size: contain;
+background-repeat: no-repeat;
 }
